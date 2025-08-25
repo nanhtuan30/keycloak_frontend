@@ -17,7 +17,7 @@ describe('AppComponent', () => {
   it(`should have the 'keycloak_frontend' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('keycloak_frontend');
+    expect(app).toEqual('keycloak_frontend');
   });
 
   it('should render title', () => {
