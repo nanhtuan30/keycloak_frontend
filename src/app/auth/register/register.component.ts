@@ -1,44 +1,40 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../auth.service';
-import { FormsModule, FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, NgIf } from '@angular/common';
+import { FormBuilder, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.scss'
+  styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent {
-registerForm: FormGroup = new FormGroup({});
+  registerForm: FormGroup;
+  error: string | null = null;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
-      password: ['', Validators.required],
-      confirmPassword: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       firstName: [''],
       lastName: [''],
-      phone: ['']
+      password: ['', Validators.required],
+      confirmPassword: ['', Validators.required],
     });
   }
 
-  register() {
-    if (this.registerForm.invalid) {
-      alert('Please fill in all required fields');
-      return;
+  onSubmit(): void {
+    if (this.registerForm.valid) {
+      const { confirmPassword, ...payload } = this.registerForm.value;
+      if (payload.password !== confirmPassword) {
+        this.error = 'Passwords do not match';
+        return;
+      }
+      this.authService.register(payload).subscribe({
+        error: (err) => (this.error = err.message),
+      });
     }
-
-    const { password, confirmPassword } = this.registerForm.value;
-    if (password !== confirmPassword) {
-      alert('Passwords do not match!');
-      return;
-    }
-
-    this.authService.register(this.registerForm.value).subscribe({
-      next: res => console.log('Registration success', res),
-      error: err => console.error('Registration error', err)
-    });
   }
 }
