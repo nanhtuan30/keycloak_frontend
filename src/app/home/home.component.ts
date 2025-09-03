@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService, UserProfile } from '../services/auth.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -10,20 +10,28 @@ import { takeUntil } from 'rxjs/operators';
   selector: 'app-home',
   imports: [CommonModule],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, OnDestroy {
   profile: UserProfile | null = null;
   loading = true;
   error: string | null = null;
+  successMessage: string | null = null;
   private destroy$ = new Subject<void>();
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['registered']) {
+        this.successMessage = 'Đăng ký thành công! Vui lòng đăng nhập.';
+        setTimeout(() => this.successMessage = null, 5000);
+      }
+    });
     this.loadProfile();
   }
 
@@ -41,17 +49,16 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           this.loading = false;
-          if ('data' in response && response.data) {
-            this.profile = response.data;
-          } else {
-            this.profile = response as UserProfile;
-          }
+          this.profile = response;
         },
         error: (error) => {
           this.loading = false;
-          this.error = error.message || 'Failed to load profile';
+          this.error = error.message || 'Không thể tải thông tin cá nhân';
           if (error.status === 401) {
-            setTimeout(() => this.router.navigate(['/login']), 2000);
+            this.authService.refreshToken().subscribe({
+              next: () => this.loadProfile(),
+              error: () => setTimeout(() => this.router.navigate(['/login']), 2000)
+            });
           }
         }
       });

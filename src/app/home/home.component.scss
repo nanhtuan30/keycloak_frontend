@@ -1,0 +1,46 @@
+.home-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  text-align: center;
+
+  h2 {
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  .error-message {
+    color: #e74c3c;
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+
+  .success-message {
+    color: #2ecc71;
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+
+  p {
+    font-size: 16px;
+    margin: 10px 0;
+  }
+
+  button {
+    padding: 10px 20px;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #c0392b;
+    }
+  }
+}

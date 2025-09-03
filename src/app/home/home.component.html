@@ -1,1 +1,12 @@
-<p>home works!</p>
+<div class="home-container">
+  <h2>Chào mừng bạn đến với ứng dụng!</h2>
+  <div *ngIf="loading">Đang tải...</div>
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+  <div *ngIf="profile">
+    <p><strong>Tên:</strong> {{ getDisplayName() }}</p>
+    <p><strong>Email:</strong> {{ profile.email }}</p>
+    <p><strong>Username:</strong> {{ profile.username }}</p>
+    <button (click)="logout()">Đăng xuất</button>
+  </div>
+</div>
